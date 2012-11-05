@@ -24,8 +24,7 @@ def golfer(balls, n):
 			stash_full.acquire()
 		stash_access.acquire()
 		stash -= balls
-		print("Golfer " , n ," got " , balls ," balls")
-		print("Stash = ", stash)
+		print("Golfer " , n ," got " , balls ," balls; Stash = ", stash)
 		stash_access.release()
 		for b in range(1,balls):
 			ball_growth.acquire()
@@ -39,11 +38,14 @@ def cart():
 	global balls_on_field
 	while True:
 		cart_collect.acquire()
-		print("Replenishing stash")
+		print("###################################")
+		print("Cart entering field")
 		stash_access.acquire()
+		tmp = balls_on_field
 		stash += balls_on_field
-		print("Stash = ", stash)
 		time.sleep(rng.random())
+		print("Cart dont, gathered ", tmp," balls; Stash = ", stash)
+		print("###################################")
 		stash_access.release()
 		stash_full.release()
 
