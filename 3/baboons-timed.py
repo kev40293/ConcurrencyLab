@@ -24,33 +24,28 @@ class Lightswitch:
 
 def act_as_baboon(my_id, init_side):
 	global MAX_CROSS
+	numcrosses = 0
 	side = init_side
 	start = time()
-	while times_across[my_id] < MAX_CROSS:
+	while numcrosses < MAX_CROSS:
 		with turnstile:
 			switches[side].lock(rope)
 		with multiplex:
-			#print('baboon', my_id, 'crossing from', side_names[side])
 			sleep(random() * 5)  # simulate crossing
 		switches[side].unlock(rope)
 		side = 1 - side
-		times_across[my_id] += 1
+		numcrosses += 1
 	tt = time()-start
-	print("Baboon ", my_id, " Finished in ", tt, "s")
+	print("Baboon {:1} Finished in {:.6}s".format(my_id, tt))
 	return tt
 
 ROPE_MAX	= 5
 NUM_BABOONS = 10
 MAX_CROSS = 3
 side_names  = ['west', 'east']
-times_across = list()
 
 def runTest():
 	global time_across
-	time_across = list()
-	for i in range(NUM_BABOONS):
-		times_across.append(0)
-	print(time_across)
 	bthreads   = []
 	for i in range(NUM_BABOONS):
 		bid, bside = i, randint(0, 1)
@@ -58,9 +53,10 @@ def runTest():
 
 	for t in bthreads:
 		t.start()
-	for t in bthreads:
-		t.join()
+	for f in bthreads:
+		f.join()
 
+	print("-----------------------------")
 
 
 if __name__ == '__main__':
@@ -68,10 +64,11 @@ if __name__ == '__main__':
 	turnstile  = Lock()
 	switches   = [Lightswitch(), Lightswitch()]
 	multiplex  = Semaphore(ROPE_MAX)
-	print("Timing 3 runs 10 baboons crossing 50 times")
+	print("Timing 3 simulations with 10 baboons, 50 crossings")
+	print("-----------------------------")
 
 	timer = Timer(runTest)
 	elapTime = timer.timeit(3)
-	print("Total time = ", elapTime, "s")
-	print("Average time per run = ", elapTime/3, "s")
+	print("Total time = {:.6}s".format(elapTime))
+	print("Average time per run = {:.6}s".format(elapTime/3))
 
