@@ -24,6 +24,7 @@ class Lightswitch:
 		with self.mutex:
 			self.count -= 1
 			if self.count == 0:
+				self.crossed = 0
 				sem.release()
 
 def act_as_baboon(my_id, init_side):
