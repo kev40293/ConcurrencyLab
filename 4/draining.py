@@ -13,7 +13,7 @@ class Lightswitch:
 	def lock(self, sem):
 		with self.mutex:
 			self.count += 1
-			if self.count == 1:
+			if self.count == 1 or self.count > ROPE_MAX:
 				sem.acquire()
 
 	def unlock(self, sem):
